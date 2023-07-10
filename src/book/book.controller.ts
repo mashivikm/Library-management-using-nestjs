@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './schemas/book.schema';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -15,7 +15,7 @@ export class BookController {
 
     @Post()
     async createBook(@Body()
-     book:CreateBookDto):Promise<Book>{
+     book:Book):Promise<Book>{
         return this.bookService.create(book);
     }
 
@@ -32,7 +32,11 @@ export class BookController {
         @Param('id')
         id:string,
         @Body()
-     book:UpdateBookDto):Promise<Book>{
+        
+     book:Book):Promise<Book>{
+        if (!Book) {
+            throw new NotFoundException('Book not found');
+          }
         return this.bookService.updateById(id,book);
     }
 
@@ -41,6 +45,9 @@ export class BookController {
         @Param('id')
         id:string
     ): Promise<Book>{
+        if (!Book) {
+            throw new NotFoundException('Book not found');
+          }
         return this.bookService.deleteById(id);
     } 
 }
